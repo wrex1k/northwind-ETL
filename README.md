@@ -256,9 +256,114 @@ ETL proces v Snowflake umožnil spracovanie pôvodných dát z formátu `.csv` d
 ---
 ## 4. Vizualizácia dát
 
+Dashboard obsahuje 5 vizualizácií, ktoré odpovedajú na dôležité otázky týkajúce sa výnosov z produktov, aktivity zákazníkov a sezónnych trendov v predaji. Umožňujú identifikovať najziskovejšie kategórie a produkty, najaktívnejších zákazníkov a geografické oblasti s najväčším počtom zákazníkov. Zároveň poskytujú prehľad o dennom vývoji tržieb, čo pomáha lepšie pochopiť správanie zákazníkov a identifikovať obdobia s najvyššími predajmi.
 
-    
-Autor: Pavol Pohánka
+---
+
+### Graf 1: Príjmy podľa kategórii produktov
+*Tento graf zobrazuje príjmy z rôznych kategórií produktov. Najvyšší príjem je z kategórie Beverages (nápoje), Dairy Products (mliečne výrobky) a Confections (cukrovinky). Naopak, Grains/Cereals (obilniny/raňajkové cereálie) a Produce (čerstvé ovocie a zelenina) majú najnižšie príjmy. Tento prehľad umožňuje identifikovať, ktoré produktové kategórie generujú najviac príjmov, čo môže pomôcť pri rozhodovaní o marketingových a zásobovacích stratégiách.*
+```sql
+SELECT 
+    dim_categories.category_name, 
+    SUM(fact_orders.total_price) AS total_income
+FROM fact_orders
+JOIN dim_categories ON fact_orders.category_id = dim_categories.category_id
+GROUP BY dim_categories.category_name
+ORDER BY total_income DESC;
+```
+<p align="center">
+  <img src="https://github.com/wrex1k/northwind-ETL/blob/main/northwind_visualization/Graf%201%20Pr%C3%ADjmy%20pod%C4%BEa%20kateg%C3%B3ri%C3%AD%20produktov.png" alt="Graf 1 Príjmy podľa kategórii produktov">
+</p>
+<p align="center"><em>Obrázok 3: Graf 1 Príjmy podľa kategórii produktov</em></p>
+
+---
+
+### Graf 2: Zákazníci podľa počtu objednávok (Top 10)
+*V grafe sú zobrazení zákazníci s najvyšším počtom objednávok. Ernst Handel vedie s 35 objednávkami, po ktorom nasleduje Rattlesnake Canyon Grocery a Hungry Owl All-Night Grocers. Tento graf pomáha identifikovať najaktívnejších zákazníkov, na ktorých sa možno zamerať s cieľom zlepšiť zákaznícke vzťahy a lojalitu.*
+```sql
+SELECT 
+    dim_customer.customer_name, 
+    COUNT(fact_orders.fact_id) AS total_orders
+FROM fact_orders
+JOIN dim_customer ON fact_orders.customer_id = dim_customer.customer_id
+GROUP BY dim_customer.customer_name
+ORDER BY total_orders DESC
+LIMIT 10;
+```
+<p align="center">
+  <img src="https://github.com/wrex1k/northwind-ETL/blob/main/northwind_visualization/Graf%202%20Z%C3%A1kazn%C3%ADci%20pod%C4%BEa%20po%C4%8Dtu%20objedn%C3%A1vok%20(Top%2010).png" alt="Graf 2 Zákazníci podľa počtu objednávok (Top 10)">
+</p>
+<p align="center"><em>Obrázok 4: Graf 2 Zákazníci podľa počtu objednávok (Top 10)</em></p>
+
+---
+
+### Graf 3: Najziskovejšie produkty
+*Graf znázorňuje najziskovejšie produkty. Côte de Blaye je najvýnosnejší produkt s príjmom 63,096, čo je značne viac ako ostatné produkty. Ďalej nasledujú Thüringer Rostbratwurst a Raclette Courdavault. Tento prehľad pomáha identifikovať produkty, ktoré majú najväčší finančný prínos, čo môže byť užitočné pri rozhodovaní o skladových zásobách a propagácii.*
+```sql
+SELECT 
+    p.product_name, 
+    SUM(f.total_price) AS total_income
+FROM 
+    fact_orders f
+JOIN 
+    dim_products p ON f.product_id = p.product_id
+GROUP BY 
+    p.product_name
+ORDER BY 
+    total_income DESC;
+```
+<p align="center">
+  <img src="https://github.com/wrex1k/northwind-ETL/blob/main/northwind_visualization/Graf%203%20Najziskovej%C5%A1ie%20produkty.png" alt="Graf 3 Najziskovejšie produkty">
+</p>
+<p align="center"><em>Obrázok 5: Graf 3 Najziskovejšie produkty</em></p>
+
+---
+
+### Graf 4: Počet zákazníkov podľa geografickej polohy
+*V tomto grafe je zobrazený počet zákazníkov podľa ich geografického pôvodu. Brazília a Nemecko vedú s 9 zákazníkmi, po ktorých nasleduje USA a Francúzko. Táto vizualizácia môže pomôcť pochopiť, kde je najväčší počet zákazníkov, čo je užitočné pri plánovaní regionálnych marketingových kampaní a logistiky.*
+```sql
+SELECT 
+    c.country AS customers_country, 
+    COUNT(DISTINCT f.customer_id) AS total_customers
+FROM 
+    fact_orders f
+JOIN 
+    dim_customer c ON f.customer_id = c.customer_id
+GROUP BY 
+    c.country
+ORDER BY 
+    total_customers DESC;
+```
+<p align="center">
+  <img src="https://github.com/wrex1k/northwind-ETL/blob/main/northwind_visualization/Graf%204%20Po%C4%8Det%20z%C3%A1kazn%C3%ADkov%20pod%C4%BEa%20geografickej%20polohy.png" alt="Graf 4 Počet zákazníkov podľa geografickej polohy">
+</p>
+<p align="center"><em>Obrázok 6: Graf 4 Počet zákazníkov podľa geografickej polohy</em></p>
+
+---
+
+### Graf 5: Celkové tržby podľa jednotlivých dní
+*Posledný graf zobrazuje denné tržby, pričom sa zaznamenávajú výkyvy v priebehu času. Niektoré dni vykazujú výrazne vyššie tržby, čo môže naznačovať sezónne trendy alebo špeciálne udalosti. Analýza týchto trendov pomáha pri plánovaní zásob a promo akcií v budúcnosti.*
+```sql
+SELECT 
+    dim_date.date, 
+    SUM(fact_orders.total_price) AS daily_income
+FROM fact_orders
+JOIN dim_date ON fact_orders.order_date = dim_date.date
+GROUP BY dim_date.date
+ORDER BY dim_date.date;
+```
+<p align="center">
+  <img src="https://github.com/wrex1k/northwind-ETL/blob/main/northwind_visualization/Graf%205%20Celkov%C3%A9%20tr%C5%BEby%20pod%C4%BEa%20jednotliv%C3%BDch%20dn%C3%AD.png" alt="">
+</p>
+<p align="center"><em>Obrázok 7: Graf 5 Celkové tržby podľa jednotlivých dní</em></p>
+
+---
+### Záver 
+
+ETL proces implementovaný v Snowflake pre NorthWind dataset umožňuje efektívne spracovanie a transformáciu obchodných dát do dimenzionálneho modelu typu hviezda. Tento model poskytuje základ pre detailnú analýzu obchodných transakcií, zákazníkov, produktov a ďalších kľúčových metrik. Vizualizácie vytvorené na základe transformovaných dát poskytujú cenné poznatky, ktoré môžu pomôcť pri strategickom rozhodovaní a optimalizácii obchodných procesov. Tento projekt zobrazuje, ako môže správne navrhnutý a implementovaný ETL proces výrazne prispieť k zlepšeniu dátovej analytiky a podnikových rozhodovacích procesov.
+
+--- 
+**Autor:** Pavol Pohánka
 
 
 
