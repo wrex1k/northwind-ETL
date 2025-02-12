@@ -48,7 +48,7 @@ Navrhnutý bol hviezdicový model (star schema), ktorý umožňuje efektívnu an
   - `fact_orders:` zaznamenáva informácie o objednávkach (zákazník, zamestnanec, produkt, cena, množstvo)
 
 <p align="center">
-  <img src="https://github.com/wrex1k/ETL---NorthWind/blob/main/northwind_starschema.png" alt="hviezdicová_schéma" width="600">
+  <img src="https://github.com/wrex1k/northwind-ETL/blob/main/northwind_starschema.png" alt="hviezdicová_schéma" width="600">
 </p>
 <p align="center"><em>Obrázok 2: Dimenzionálny model typu hviezda</em></p>
 
@@ -360,7 +360,7 @@ ORDER BY dim_date.date;
 ---
 ### Záver 
 
-ETL proces implementovaný v Snowflake pre NorthWind dataset umožňuje efektívne spracovanie a transformáciu obchodných dát do dimenzionálneho modelu typu hviezda. Tento model poskytuje základ pre detailnú analýzu obchodných transakcií, zákazníkov, produktov a ďalších kľúčových metrik. Vizualizácie vytvorené na základe transformovaných dát poskytujú cenné poznatky, ktoré môžu pomôcť pri strategickom rozhodovaní a optimalizácii obchodných procesov. Tento projekt zobrazuje, ako môže správne navrhnutý a implementovaný ETL proces výrazne prispieť k zlepšeniu dátovej analytiky a podnikových rozhodovacích procesov.
+ETL proces implementovaný v Snowflake pre NorthWind dataset umožňuje efektívne spracovanie a transformáciu obchodných dát do dimenzionálneho modelu typu hviezda. Tento model poskytuje základ pre detailnú analýzu obchodných transakcií, zákazníkov, produktov a ďalších kľúčových metrík. Vizualizácie vytvorené na základe transformovaných dát poskytujú cenné poznatky, ktoré môžu pomôcť pri strategickom rozhodovaní a optimalizácii obchodných procesov. Tento projekt zobrazuje, ako môže správne navrhnutý a implementovaný ETL proces výrazne prispieť k zlepšeniu dátovej analytiky a podnikových rozhodovacích procesov.
 
 --- 
 **Autor:** Pavol Pohánka
